@@ -1,0 +1,132 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* BODY */
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: linear-gradient(135deg, #eef2f7, #dbe6f3);
+  min-height: 100vh;
+  padding: 40px 15px;
+  color: #1a1a1a;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 750px;
+  margin: auto;
+  background: rgba(255,255,255,0.95);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+  backdrop-filter: blur(6px);
+  transition: 0.3s ease;
+}
+
+/* LOGO */
+.logo {
+  width: 140px;
+  display: block;
+  margin: 0 auto 20px auto;
+  opacity: 0.9;
+}
+
+/* HEADINGS */
+h2, h3 {
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #003366;
+}
+
+h3 {
+  margin-top: 30px;
+}
+
+/* INPUTS */
+input[type="file"],
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccd6e0;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+textarea {
+  height: 130px;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #003366;
+  box-shadow: 0 0 0 2px rgba(0,51,102,0.1);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 18px;
+  background: linear-gradient(135deg, #003366, #0055aa);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,51,102,0.25);
+}
+
+/* HASH DISPLAY BOX */
+.hash-box {
+  background: #f3f6fa;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  word-break: break-all;
+  color: #333;
+  border: 1px dashed #cbd5e1;
+}
+
+/* SECTION DIVIDER */
+.section {
+  margin-top: 40px;
+  padding-top: 25px;
+  border-top: 1px solid #e4e9f0;
+}
+
+/* VERIFICATION RESULT */
+#verifyResult {
+  margin-top: 15px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.verified {
+  color: #0f9d58;
+}
+
+.not-verified {
+  color: #d93025;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .container {
+    padding: 25px;
+  }
+}
