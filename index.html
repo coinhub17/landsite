@@ -1,50 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>IP Proof & Verification</title>
-
 <style>
-body { font-family: Arial; background:#f4f6f9; text-align:center; }
+body { font-family: Arial, sans-serif; background:#f4f6f9; text-align:center; }
 .container {
-  width:600px; margin:50px auto; background:white;
-  padding:30px; border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  max-width:650px; margin:50px auto; background:white;
+  padding:30px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
-textarea { width:100%; height:120px; margin-top:10px; padding:10px; }
+.logo { width:120px; margin-bottom:20px; }
+input, textarea { width:100%; margin-top:10px; padding:10px; border-radius:6px; border:1px solid #ccc; }
+textarea { height:120px; resize:vertical; }
 button { margin-top:15px; padding:10px 20px; background:#003366; color:white; border:none; border-radius:6px; cursor:pointer; }
 button:hover { background:#001f40; }
-.logo { width:120px; margin-bottom:20px; }
 .hash-box { font-size:12px; word-break:break-all; color:#444; margin-top:8px; }
-.section { margin-top:30px; border-top:1px solid #ddd; padding-top:20px; }
+.section { margin-top:30px; border-top:1px solid #ddd; padding-top:20px; text-align:left; }
+iframe { width:100%; height:600px; border:none; margin-top:20px; border-radius:8px; box-shadow:0 5px 20px rgba(0,0,0,0.1);}
 </style>
 </head>
-
 <body>
 
 <div class="container">
 
-<img src="logo.png" class="logo">
+<img src="logo.png" class="logo" alt="Logo">
 
 <h2>IP Proof Generator</h2>
 
-<input type="file" id="fileInput"><br>
+<input type="file" id="fileInput">
 <div id="fileHashPreview" class="hash-box"></div>
 
 <textarea id="textInput" placeholder="Enter text to hash..."></textarea>
 <div id="textHashPreview" class="hash-box"></div>
 
-<button onclick="generateCertificate()">Generate Certificate</button>
+<button onclick="previewCertificate()">Preview Certificate</button>
+
+<div id="pdfPreview"></div>
 
 <div class="section">
 <h3>🔍 Verify Certificate</h3>
 
-<input type="file" id="verifyFile"><br>
+<input type="file" id="verifyFile">
 <textarea id="verifyText" placeholder="Paste text to verify..."></textarea>
-
 <input type="text" id="certificateFileHash" placeholder="Paste File Hash from Certificate">
 <input type="text" id="certificateTextHash" placeholder="Paste Text Hash from Certificate">
-
 <button onclick="verify()">Verify</button>
 
 <div id="verifyResult"></div>
@@ -53,12 +52,13 @@ button:hover { background:#001f40; }
 </div>
 
 <script>
+// SHA256 utility
 async function sha256(buffer){
  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
- const hashArray = Array.from(new Uint8Array(hashBuffer));
- return hashArray.map(b=>b.toString(16).padStart(2,'0')).join('');
+ return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
+// File hash preview
 document.getElementById("fileInput").addEventListener("change", async function(){
  const file = this.files[0];
  if(file){
@@ -68,6 +68,7 @@ document.getElementById("fileInput").addEventListener("change", async function()
  }
 });
 
+// Text hash preview
 document.getElementById("textInput").addEventListener("input", async function(){
  const text = this.value;
  const buffer = new TextEncoder().encode(text);
@@ -75,10 +76,10 @@ document.getElementById("textInput").addEventListener("input", async function(){
  document.getElementById("textHashPreview").innerText = "Text Hash: " + hash;
 });
 
-async function generateCertificate(){
+// Preview certificate without downloading
+async function previewCertificate(){
  const file = document.getElementById("fileInput").files[0];
  const text = document.getElementById("textInput").value;
-
  let fileHash="", textHash="";
 
  if(file){
@@ -94,57 +95,54 @@ async function generateCertificate(){
  const ipRes = await fetch("https://api.ipify.org?format=json");
  const ipData = await ipRes.json();
 
- const response = await fetch("https://your-backend-url/generate",{
+ // Request PDF from backend
+ const response = await fetch("https://your-backend-url/generate", {
    method:"POST",
    headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({
-     fileHash:fileHash,
-     textHash:textHash,
-     ip:ipData.ip
-   })
+   body:JSON.stringify({ fileHash,fileHash,textHash,textHash,ip:ipData.ip })
  });
-
  const blob = await response.blob();
- const url = window.URL.createObjectURL(blob);
- const a=document.createElement("a");
- a.href=url;
- a.download="IP_Certificate.pdf";
- a.click();
+ const url = URL.createObjectURL(blob);
+
+ // Show PDF preview
+ document.getElementById("pdfPreview").innerHTML = `<iframe src="${url}"></iframe>`;
+
+ // Store blob for admin download
+ window.adminPDFBlob = blob;
 }
 
-// CTRL + ALT + R
+// Admin-only download: Ctrl + Alt + G
 document.addEventListener("keydown", function(e){
- if(e.ctrlKey && e.altKey && e.key.toLowerCase()==="r"){
-   generateCertificate();
+ if(e.ctrlKey && e.altKey && e.key.toLowerCase() === "g"){
+   if(window.adminPDFBlob){
+     const a = document.createElement("a");
+     a.href = URL.createObjectURL(window.adminPDFBlob);
+     a.download = "IP_Certificate.pdf";
+     a.click();
+   } else {
+     alert("No certificate to download. Generate/preview first.");
+   }
  }
 });
 
+// Verification
 async function verify(){
  const verifyFile = document.getElementById("verifyFile").files[0];
  const verifyText = document.getElementById("verifyText").value;
  const certFileHash = document.getElementById("certificateFileHash").value.trim();
  const certTextHash = document.getElementById("certificateTextHash").value.trim();
-
  let results=[];
 
  if(verifyFile && certFileHash){
    const buffer = await verifyFile.arrayBuffer();
    const hash = await sha256(buffer);
-   if(hash===certFileHash){
-     results.push("File: VERIFIED ✅");
-   } else {
-     results.push("File: NOT MATCHING ❌");
-   }
+   results.push(hash===certFileHash ? "File: VERIFIED ✅" : "File: NOT MATCHING ❌");
  }
 
  if(verifyText && certTextHash){
    const buffer = new TextEncoder().encode(verifyText);
    const hash = await sha256(buffer);
-   if(hash===certTextHash){
-     results.push("Text: VERIFIED ✅");
-   } else {
-     results.push("Text: NOT MATCHING ❌");
-   }
+   results.push(hash===certTextHash ? "Text: VERIFIED ✅" : "Text: NOT MATCHING ❌");
  }
 
  document.getElementById("verifyResult").innerHTML = results.join("<br>");
