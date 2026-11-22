@@ -1,153 +1,693 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IP Proof & Verification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPLOCAL | IP Verification</title>
+
 <style>
-body { font-family: Arial, sans-serif; background:#f4f6f9; text-align:center; }
-.container {
-  max-width:650px; margin:50px auto; background:white;
-  padding:30px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.1);
+:root {
+    --primary: #102b46;
+    --primary-light: #183d60;
+    --accent: #c6a45c;
+    --background: #f4f6f9;
+    --white: #ffffff;
+    --text: #263445;
+    --muted: #718096;
+    --border: #e1e7ed;
+    --success: #18835d;
 }
-.logo { width:120px; margin-bottom:20px; }
-input, textarea { width:100%; margin-top:10px; padding:10px; border-radius:6px; border:1px solid #ccc; }
-textarea { height:120px; resize:vertical; }
-button { margin-top:15px; padding:10px 20px; background:#003366; color:white; border:none; border-radius:6px; cursor:pointer; }
-button:hover { background:#001f40; }
-.hash-box { font-size:12px; word-break:break-all; color:#444; margin-top:8px; }
-.section { margin-top:30px; border-top:1px solid #ddd; padding-top:20px; text-align:left; }
-iframe { width:100%; height:600px; border:none; margin-top:20px; border-radius:8px; box-shadow:0 5px 20px rgba(0,0,0,0.1);}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* HEADER */
+header {
+    background: var(--primary);
+    color: white;
+    padding: 20px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--accent);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-mark {
+    width: 43px;
+    height: 43px;
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 19px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+.brand-text h1 {
+    font-size: 21px;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.brand-text p {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #c4d0dc;
+    margin-top: 4px;
+}
+
+.header-right {
+    font-size: 12px;
+    color: #d5dfeb;
+    letter-spacing: 1px;
+}
+
+/* NAVIGATION */
+nav {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0 7%;
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 17px 0;
+    display: inline-block;
+    border-bottom: 2px solid transparent;
+}
+
+nav a:hover,
+nav a.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--accent);
+}
+
+/* MAIN */
+.container {
+    width: 86%;
+    max-width: 1200px;
+    margin: 35px auto;
+}
+
+.page-heading {
+    margin-bottom: 28px;
+}
+
+.page-heading h2 {
+    font-size: 27px;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.page-heading p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* STATUS */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 25px;
+    font-size: 13px;
+}
+
+.status-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    background: #25a36f;
+    border-radius: 50%;
+}
+
+.status-label {
+    color: var(--success);
+    font-weight: 600;
+}
+
+/* GRID */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 22px;
+}
+
+.card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 20px 23px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-header h3 {
+    color: var(--primary);
+    font-size: 16px;
+    margin-bottom: 6px;
+}
+
+.card-header p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.card-body {
+    padding: 24px;
+}
+
+/* UPLOAD */
+.upload-box {
+    border: 1.5px dashed #b8c5d2;
+    border-radius: 7px;
+    padding: 38px 20px;
+    text-align: center;
+    background: #fafbfd;
+    transition: 0.2s;
+}
+
+.upload-box:hover {
+    border-color: var(--primary-light);
+    background: #f4f8fc;
+}
+
+.upload-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.upload-box h4 {
+    font-size: 15px;
+    color: var(--primary);
+    margin-bottom: 7px;
+}
+
+.upload-box p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.upload-btn {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 11px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.upload-btn:hover {
+    background: var(--primary-light);
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.file-info {
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.file-size {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+/* CERTIFICATE */
+.certificate-panel {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 18px;
+}
+
+.cert-title {
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.cert-field {
+    margin-bottom: 16px;
+}
+
+.cert-field label {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 7px;
+}
+
+.cert-field div {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+.hash-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 11px;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    word-break: break-all;
+}
+
+/* ACTIONS */
+.action-btn {
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    background: var(--primary);
+    color: white;
+    padding: 13px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.action-btn:hover {
+    background: var(--primary-light);
+}
+
+.secondary-btn {
+    width: 100%;
+    background: white;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+/* VERIFICATION */
+.verification-card {
+    margin-top: 25px;
+}
+
+.verify-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.verify-form label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.verify-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    outline: none;
+    font-size: 13px;
+}
+
+.verify-form input:focus {
+    border-color: var(--primary);
+}
+
+.verify-form input[type="file"] {
+    display: block;
+    padding: 10px;
+    background: #fafbfd;
+}
+
+.verify-btn {
+    background: #183d60;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* INFORMATION */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.info-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+}
+
+.info-box h4 {
+    color: var(--primary);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.info-box p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* FOOTER */
+footer {
+    background: var(--primary);
+    color: #d2dce7;
+    padding: 25px 7%;
+    margin-top: 55px;
+    font-size: 12px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+footer strong {
+    color: white;
+}
+
+/* RESPONSIVE */
+@media (max-width: 850px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-right {
+        display: none;
+    }
+
+    nav {
+        gap: 18px;
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 500px) {
+    header {
+        padding: 17px 5%;
+    }
+
+    .brand-text h1 {
+        font-size: 17px;
+    }
+
+    .container {
+        width: 92%;
+        margin: 25px auto;
+    }
+
+    .page-heading h2 {
+        font-size: 22px;
+    }
+
+    .status-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
 </style>
 </head>
+
 <body>
 
+<!-- HEADER -->
+<header>
+    <div class="brand">
+        <div class="brand-mark">IP</div>
+        <div class="brand-text">
+            <h1>IPLOCAL</h1>
+            <p>INTELLECTUAL PROPERTY VERIFICATION</p>
+        </div>
+    </div>
+
+    <div class="header-right">
+        DIGITAL PROOF SYSTEM
+    </div>
+</header>
+
+<!-- NAVIGATION -->
+<nav>
+    <a href="#" class="active">Dashboard</a>
+    <a href="#timestamp">Timestamp</a>
+    <a href="#verification">Verification</a>
+    <a href="#information">About IPLOCAL</a>
+</nav>
+
+<!-- MAIN -->
 <div class="container">
 
-<img src="logo.png" class="logo" alt="Logo">
+    <div class="page-heading">
+        <h2>IP Proof & Timestamp Generator</h2>
+        <p>
+            Create a digital fingerprint for your work and establish a
+            timestamped record of the file's current state.
+        </p>
+    </div>
 
-<h2>IP Proof Generator</h2>
+    <!-- STATUS -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span class="status-dot"></span>
+            <span class="status-label">System Interface Active</span>
+        </div>
+        <span>SHA256 Digital Hashing</span>
+    </div>
 
-<input type="file" id="fileInput">
-<div id="fileHashPreview" class="hash-box"></div>
+    <!-- MAIN GRID -->
+    <div class="main-grid">
 
-<textarea id="textInput" placeholder="Enter text to hash..."></textarea>
-<div id="textHashPreview" class="hash-box"></div>
+        <!-- FILE TIMESTAMP CARD -->
+        <div class="card" id="timestamp">
+            <div class="card-header">
+                <h3>01 — File Timestamping</h3>
+                <p>Upload a document to generate its digital fingerprint.</p>
+            </div>
 
-<button onclick="previewCertificate()">Preview Certificate</button>
+            <div class="card-body">
 
-<div id="pdfPreview"></div>
+                <div class="upload-box">
+                    <div class="upload-icon">📁</div>
+                    <h4>Upload your digital file</h4>
+                    <p>Documents, images, designs, audio or other digital content</p>
 
-<div class="section">
-<h3>🔍 Verify Certificate</h3>
+                    <label for="file-upload" class="upload-btn">
+                        Select File
+                    </label>
 
-<input type="file" id="verifyFile">
-<textarea id="verifyText" placeholder="Paste text to verify..."></textarea>
-<input type="text" id="certificateFileHash" placeholder="Paste File Hash from Certificate">
-<input type="text" id="certificateTextHash" placeholder="Paste Text Hash from Certificate">
-<button onclick="verify()">Verify</button>
+                    <input type="file" id="file-upload">
+                </div>
 
-<div id="verifyResult"></div>
+                <div class="file-info">
+                    <div>
+                        <div class="file-name">No file selected</div>
+                        <div class="file-size">Awaiting upload</div>
+                    </div>
+                    <div>—</div>
+                </div>
+
+                <button class="action-btn">
+                    Generate Timestamp Proof
+                </button>
+
+            </div>
+        </div>
+
+        <!-- CERTIFICATE CARD -->
+        <div class="card">
+            <div class="card-header">
+                <h3>02 — Proof Record</h3>
+                <p>Digital file identification information</p>
+            </div>
+
+            <div class="card-body">
+
+                <div class="certificate-panel">
+
+                    <div class="cert-title">
+                        IPLOCAL DIGITAL PROOF RECORD
+                    </div>
+
+                    <div class="cert-field">
+                        <label>FILE NAME</label>
+                        <div>Awaiting file...</div>
+                    </div>
+
+                    <div class="cert-field">
+                        <label>SHA256 DIGITAL FINGERPRINT</label>
+                        <div class="hash-box">
+                            Hash will appear after file processing.
+                        </div>
+                    </div>
+
+                    <div class="cert-field">
+                        <label>DATE & TIME OF RECORD</label>
+                        <div>Awaiting generation...</div>
+                    </div>
+
+                    <div class="cert-field">
+                        <label>RECORD STATUS</label>
+                        <div style="color:#718096;">
+                            Pending verification
+                        </div>
+                    </div>
+
+                </div>
+
+                <button class="secondary-btn">
+                    Preview Certificate
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- VERIFICATION -->
+    <div class="card verification-card" id="verification">
+
+        <div class="card-header">
+            <h3>03 — File Verification</h3>
+            <p>Verify whether a file matches a previously recorded SHA256 fingerprint.</p>
+        </div>
+
+        <div class="card-body">
+
+            <div class="verify-form">
+
+                <label>Original SHA256 Fingerprint</label>
+                <input type="text" placeholder="Paste original SHA256 hash here">
+
+                <label>Upload File for Verification</label>
+                <input type="file">
+
+                <button class="verify-btn">
+                    Verify File Integrity
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- INFORMATION -->
+    <div class="info-grid" id="information">
+
+        <div class="info-box">
+            <h4>SHA256 Technology</h4>
+            <p>
+                Generates a cryptographic fingerprint unique to the file's
+                content. Any modification to the file will produce a different hash.
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h4>Digital Evidence</h4>
+            <p>
+                Creates a downloadable record containing the filename,
+                fingerprint and timestamp of processing.
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h4>File Integrity</h4>
+            <p>
+                Compare a file against its previously recorded fingerprint
+                to determine whether its content remains unchanged.
+            </p>
+        </div>
+
+    </div>
+
 </div>
 
-</div>
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <div>
+            <strong>IPLOCAL</strong><br>
+            IP Proof & Verification System
+        </div>
 
-<script>
-// SHA256 utility
-async function sha256(buffer){
- const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
- return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
+        <div>
+            Digital Fingerprinting • Timestamp Records • File Integrity
+        </div>
+    </div>
+</footer>
 
-// File hash preview
-document.getElementById("fileInput").addEventListener("change", async function(){
- const file = this.files[0];
- if(file){
-   const buffer = await file.arrayBuffer();
-   const hash = await sha256(buffer);
-   document.getElementById("fileHashPreview").innerText = "File Hash: " + hash;
- }
-});
+</body>
+</html>
 
-// Text hash preview
-document.getElementById("textInput").addEventListener("input", async function(){
- const text = this.value;
- const buffer = new TextEncoder().encode(text);
- const hash = await sha256(buffer);
- document.getElementById("textHashPreview").innerText = "Text Hash: " + hash;
-});
-
-// Preview certificate without downloading
-async function previewCertificate(){
- const file = document.getElementById("fileInput").files[0];
- const text = document.getElementById("textInput").value;
- let fileHash="", textHash="";
-
- if(file){
-   const buffer = await file.arrayBuffer();
-   fileHash = await sha256(buffer);
- }
-
- if(text){
-   const buffer = new TextEncoder().encode(text);
-   textHash = await sha256(buffer);
- }
-
- const ipRes = await fetch("https://api.ipify.org?format=json");
- const ipData = await ipRes.json();
-
- // Request PDF from backend
- const response = await fetch("https://your-backend-url/generate", {
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({ fileHash,fileHash,textHash,textHash,ip:ipData.ip })
- });
- const blob = await response.blob();
- const url = URL.createObjectURL(blob);
-
- // Show PDF preview
- document.getElementById("pdfPreview").innerHTML = `<iframe src="${url}"></iframe>`;
-
- // Store blob for admin download
- window.adminPDFBlob = blob;
-}
-
-// Admin-only download: Ctrl + Alt + G
-document.addEventListener("keydown", function(e){
- if(e.ctrlKey && e.altKey && e.key.toLowerCase() === "g"){
-   if(window.adminPDFBlob){
-     const a = document.createElement("a");
-     a.href = URL.createObjectURL(window.adminPDFBlob);
-     a.download = "IP_Certificate.pdf";
-     a.click();
-   } else {
-     alert("No certificate to download. Generate/preview first.");
-   }
- }
-});
-
-// Verification
-async function verify(){
- const verifyFile = document.getElementById("verifyFile").files[0];
- const verifyText = document.getElementById("verifyText").value;
- const certFileHash = document.getElementById("certificateFileHash").value.trim();
- const certTextHash = document.getElementById("certificateTextHash").value.trim();
- let results=[];
-
- if(verifyFile && certFileHash){
-   const buffer = await verifyFile.arrayBuffer();
-   const hash = await sha256(buffer);
-   results.push(hash===certFileHash ? "File: VERIFIED ✅" : "File: NOT MATCHING ❌");
- }
-
- if(verifyText && certTextHash){
-   const buffer = new TextEncoder().encode(verifyText);
-   const hash = await sha256(buffer);
-   results.push(hash===certTextHash ? "Text: VERIFIED ✅" : "Text: NOT MATCHING ❌");
- }
-
- document.getElementById("verifyResult").innerHTML = results.join("<br>");
-}
-</script>
 
 </body>
 </html>
